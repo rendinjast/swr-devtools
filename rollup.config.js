@@ -1,18 +1,12 @@
 import babel from '@rollup/plugin-babel'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
-// import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
 import externalDeps from 'rollup-plugin-peer-deps-external'
-// import externals from 'rollup-plugin-node-externals'
 import del from 'rollup-plugin-delete'
-// import visualizer from 'rollup-plugin-visualizer'
-// import replace from '@rollup/plugin-replace'";
 import pkg from './package.json'
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
-// const babelConfig = { extensions }
-// const resolveConfig = { extensions, jsnext: true }
 
 const globals = {
   react: 'React',
