@@ -176,7 +176,7 @@ export default function Explorer({
     subEntries = Object.entries(value).map(([label, _value]) =>
       makeProperty({
         label,
-        _value
+        value: _value
       })
     )
   }

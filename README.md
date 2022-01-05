@@ -1,6 +1,6 @@
 <h1 align="center">react-query devtools for <a href="https://swr.vercel.app/">swr</a></h1>
 
-![App screenshot](./main.png)
+![App screenshot](https://raw.githubusercontent.com/rendinjast/swr-devtools/master/main.png)
 
 > under development
 

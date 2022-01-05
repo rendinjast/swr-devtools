@@ -17,8 +17,8 @@ const input = 'src/index.tsx'
 export default {
   input,
   output: [
-    { file: pkg.main, format: 'cjs' },
-    { file: pkg.module, format: 'es' }
+    { file: pkg.main, format: 'cjs', exports: 'auto', sourcemap: true },
+    { file: pkg.module, format: 'es', exports: 'auto', sourcemap: true }
   ],
   external: Object.keys(globals),
   plugins: [
