@@ -1,0 +1,62 @@
+{
+  "name": "@rendinjast/swr-devtools",
+  "description": "react-query devtools for SWR",
+  "version": "0.0.1",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "types/index.d.ts",
+  "sideEffects": false,
+  "author": "Erfan Khadivar <rendinjast@gmail.com>",
+  "repository": "rendinjast/swr-devtools",
+  "homepage": "https://github.com/rendinjast/swr-devtools#readme",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c rollup.config.js",
+    "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
+    "test:format": "prettier --check \"{src,src/**}/*.{md,js,jsx,ts,tsx,json}\"",
+    "format": "prettier --write \"{src,src/**}/*.{md,js,jsx,ts,tsx,json}\"",
+    "lint": "eslint . ./src/**/*.ts --cache",
+    "lint:fix": "eslint . ./src/**/*.ts --fix"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.1.2",
+    "@types/node": "^17.0.7",
+    "@types/react": "^17.0.38",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "bunchee": "^1.8.0",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.5.1",
+    "react": "^17.0.2",
+    "replace": "^1.2.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.63.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-node-externals": "^3.1.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-size": "^0.2.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "swr": "^1.1.2",
+    "typescript": "^4.5.4"
+  },
+  "peerDependencies": {
+    "react": "^16.11.0 || ^17.0.0 || ^18.0.0",
+    "swr": ">=0.0.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.16.7",
+    "match-sorter": "^6.3.1"
+  }
+}

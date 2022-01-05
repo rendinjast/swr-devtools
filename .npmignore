@@ -1,0 +1,16 @@
+.eslintcache
+.DS_Store
+node_modules
+dist
+*.log
+*.tgz
+.env
+.next
+.idea
+.vscode
+.eslintcache
+package-lock.json
+tsconfig.tsbuildinfo
+**/*.yalc
+yalc.lock
+src
