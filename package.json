@@ -2,7 +2,7 @@
   "name": "@rendinjast/swr-devtools",
   "description": "react-query devtools for SWR",
   "type": "commonjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "types/index.d.ts",
@@ -18,7 +18,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "cross-env NODE_ENV=development rollup -c rollup.config.js",
-    "build:js": "cross-env NODE_ENV=development rollup -c rollup.config.js",
+    "build:js": "cross-env NODE_ENV=production rollup -c rollup.config.js",
     "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
     "build": "yarn build:types && yarn build:js",
     "format:test": "prettier --check \"{src,src/**}/*.{md,js,jsx,ts,tsx,json}\"",

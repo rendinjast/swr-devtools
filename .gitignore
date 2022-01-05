@@ -12,3 +12,4 @@ package-lock.json
 tsconfig.tsbuildinfo
 **/*.yalc
 yalc.lock
+size-plugin.json
