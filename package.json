@@ -16,7 +16,6 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "cross-env NODE_ENV=development rollup -c rollup.config.js",
     "build:js": "cross-env NODE_ENV=production rollup -c rollup.config.js",
     "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
