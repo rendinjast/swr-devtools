@@ -3,19 +3,28 @@ import { Key } from 'swr'
 import reducer, { SWRDevToolsActions } from './reducer'
 
 export interface ISWRItem {
+  id: string
   key: Key
   data: any
   error: string | null
-  isValidating: boolean
+  isLoading: boolean
   timestamp: Date
+  options: any
+}
+export interface ISWRState {
+  cache: ISWRItem[]
+  history: ISWRItem[]
 }
 interface ISWRContext {
-  state: ISWRItem[]
+  state: ISWRState
   dispatch: Dispatch<SWRDevToolsActions>
 }
 
 export const initialState: ISWRContext = {
-  state: [],
+  state: {
+    cache: [],
+    history: []
+  },
   dispatch: () => {}
 }
 const context = createContext<ISWRContext>(initialState)

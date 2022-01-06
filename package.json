@@ -2,7 +2,7 @@
   "name": "@rendinjast/swr-devtools",
   "description": "react-query devtools for SWR",
   "type": "commonjs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "types/index.d.ts",

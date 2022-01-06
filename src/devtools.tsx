@@ -365,20 +365,27 @@ export const SWRDevtoolsPanel = React.forwardRef<
 >(function SWRDevtoolsPanel(props, ref): React.ReactElement {
   const { isOpen = true, setIsOpen, handleDragStart, ...panelProps } = props
 
-  const [activeData, setActiveData] = useSafeState<any>('')
-  const [activeKey, setActiveKey] = useLocalStorage('SWRDevtoolsActiveKey', '')
+  const [activeItem, setActiveItem] = useLocalStorage<ISWRItem | undefined>(
+    'SWRDevtoolsActiveItem',
+    undefined
+  )
   const { state, dispatch } = useSWRDevtoolsContext()
   const { cache, mutate } = useSWRConfig()
-
-  useEffect(() => {
-    const item = state.find(q => q.key === activeKey)
-    setActiveData(item)
-  }, [activeKey, state])
-
   const [sort, setSort] = useLocalStorage(
     'SWRDevtoolsSortFn',
     Object.keys(sortFns)[0]
   )
+  const [list, setList] = useLocalStorage<'cache' | 'history'>(
+    'SWRDevtoolsList',
+    'cache'
+  )
+
+  // useEffect(() => {
+  //   if (list) {
+  //     const item = state[list!].find((q) => q.id === activeItem);
+  //     setActiveData(item);
+  //   }
+  // }, [activeItem, state, list]);
 
   const [filter, setFilter] = useLocalStorage('SWRDevtoolsFilter', '')
 
@@ -393,28 +400,54 @@ export const SWRDevtoolsPanel = React.forwardRef<
   }, [setSort, sortFn])
 
   const keys = React.useMemo(() => {
-    const sorted = [...state].sort(sortFn)
+    if (list) {
+      const _list = state[list]
+      // console.log(_list);
+      // const item = state[list!].find((q) => q.id === activeItem?.id);
+      // setActiveItem(item);
 
-    if (sortDesc) {
-      sorted.reverse()
+      const sorted = _list.sort(sortFn)
+      if (sortDesc) {
+        sorted.reverse()
+      }
+
+      if (!filter) {
+        return sorted
+      }
+
+      return matchSorter(sorted, filter, { keys: ['key'] }).filter(d => d.key)
     }
 
-    if (!filter) {
-      return sorted
+    return []
+  }, [sortDesc, list, sort, state, filter])
+  useEffect(() => {
+    if (list && activeItem) {
+      // setActiveItem((prv) => {
+      //   return state[list].find((q) => q.id === prv?.id);
+      // });
+      const item = state[list!].find(q => q.key === activeItem?.key)
+      setActiveItem(item)
     }
+  }, [state])
 
-    return matchSorter(sorted, filter, { keys: ['key'] }).filter(d => d.key)
-  }, [sortDesc, sort, state, filter])
-
+  const handleItemClick = (id: string) => {
+    if (list) {
+      const item = state[list!].find(q => q.id === id)
+      setActiveItem(item)
+    }
+  }
   const handleRefetch = () => {
-    mutate(activeKey).catch(err => {
+    mutate(activeItem?.key).catch(err => {
       console.log(err)
     })
   }
   const handleDelete = () => {
-    dispatch({ type: SWRActionType.ITEM_DELETE, payload: { key: activeKey } })
-    cache.delete(activeKey)
-    setActiveKey('')
+    dispatch({
+      type: SWRActionType.ITEM_DELETE,
+      payload: { key: activeItem?.key }
+    })
+    cache.delete(activeItem?.key)
+    setActiveItem(undefined)
   }
   // const handleInvalidate = () => {
   //   mutate(activeKey).then(() => {
@@ -558,19 +591,39 @@ export const SWRDevtoolsPanel = React.forwardRef<
                 {!filter ? (
                   <>
                     <Select
-                      aria-label="Sort queries"
-                      value={sort}
-                      onChange={e => setSort(e.target.value)}
+                      aria-label="select list"
+                      value={list}
+                      onChange={e =>
+                        setList(e.target.value as 'cache' | 'history')
+                      }
                       style={{
                         flex: '1',
                         minWidth: 75,
                         marginRight: '.5em'
                       }}
                     >
+                      {['history', 'cache'].map(key => {
+                        return (
+                          <option key={key} value={key}>
+                            list: {key}
+                          </option>
+                        )
+                      })}
+                    </Select>
+                    <Select
+                      aria-label="Sort queries"
+                      value={sort}
+                      onChange={e => setSort(e.target.value)}
+                      style={{
+                        flex: '1',
+                        minWidth: 136,
+                        marginRight: '.5em'
+                      }}
+                    >
                       {Object.keys(sortFns).map(key => {
                         return (
                           <option key={key} value={key}>
-                            Sort by {key}
+                            Sort: {key}
                           </option>
                         )
                       })}
@@ -598,34 +651,33 @@ export const SWRDevtoolsPanel = React.forwardRef<
             {keys.map((item, i) => {
               const isDisabled = false
               const key = item.key?.toString()
-              if (!key) return null
-              // query.getObserversCount() > 0 && !query.isActive();
               return (
                 <div
-                  key={key || i}
+                  key={item.id}
                   role="button"
                   aria-label={`Open details for ${key}`}
-                  onClick={() => setActiveKey(activeKey === key ? '' : key)}
+                  onClick={() => handleItemClick(item.id)}
                   style={{
                     display: 'flex',
                     borderBottom: `solid 1px ${theme.grayAlt}`,
                     cursor: 'pointer',
                     background:
-                      key === activeKey ? 'rgba(255,255,255,.1)' : undefined
+                      item.id === activeItem?.id
+                        ? 'rgba(255,255,255,.1)'
+                        : undefined
                   }}
                 >
                   <div
                     style={{
-                      flex: '0 0 auto',
+                      // flex: '0 0 auto',
                       width: '2em',
                       height: '2em',
-                      // background: getQueryStatusColor(query, theme),
-                      background: 'red',
+                      background: 'gray',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontWeight: 'bold'
-                      // textShadow:
+                      // // textShadow:
                       //   getQueryStatusLabel(query) === 'stale'
                       //     ? '0'
                       //     : '0 0 10px black',
@@ -635,7 +687,6 @@ export const SWRDevtoolsPanel = React.forwardRef<
                       //     : 'white',
                     }}
                   >
-                    {/* TODO number  */}
                     {i}
                   </div>
                   {isDisabled ? (
@@ -665,7 +716,7 @@ export const SWRDevtoolsPanel = React.forwardRef<
             })}
           </div>
         </div>
-        {activeKey ? (
+        {activeItem ? (
           <ActiveKeyPanel>
             <div
               style={{
@@ -703,7 +754,7 @@ export const SWRDevtoolsPanel = React.forwardRef<
                       overflow: 'auto'
                     }}
                   >
-                    {activeKey}
+                    {activeItem.key}
                   </pre>
                 </Code>
                 <span
@@ -738,8 +789,8 @@ export const SWRDevtoolsPanel = React.forwardRef<
               >
                 Last Updated:{' '}
                 <Code>
-                  {activeData &&
-                    new Date(activeData.timestamp).toLocaleTimeString()}
+                  {activeItem.timestamp &&
+                    new Date(activeItem.timestamp).toLocaleTimeString()}
                 </Code>
               </div>
             </div>
@@ -816,11 +867,11 @@ export const SWRDevtoolsPanel = React.forwardRef<
             >
               <Explorer
                 label="Data"
-                value={activeData && activeData.data}
+                value={activeItem.data && activeItem.data}
                 defaultExpanded={{}}
               />
             </div>
-            {activeData?.error && (
+            {activeItem?.error && (
               <>
                 <div
                   style={{
@@ -840,7 +891,33 @@ export const SWRDevtoolsPanel = React.forwardRef<
                 >
                   <Explorer
                     label="Message"
-                    value={activeData && activeData.error}
+                    value={activeItem.error}
+                    defaultExpanded={{}}
+                  />
+                </div>{' '}
+              </>
+            )}
+            {activeItem?.options && (
+              <>
+                <div
+                  style={{
+                    background: theme.backgroundAlt,
+                    padding: '.5em',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1
+                  }}
+                >
+                  Options Explorer
+                </div>
+                <div
+                  style={{
+                    padding: '.5em'
+                  }}
+                >
+                  <Explorer
+                    label="options"
+                    value={activeItem.options}
                     defaultExpanded={{}}
                   />
                 </div>{' '}
